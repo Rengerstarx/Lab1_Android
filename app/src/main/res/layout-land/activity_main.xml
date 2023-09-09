@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <ImageView
+        android:id="@+id/ImageLogo"
+        android:layout_width="0dp"
+        android:layout_height="196dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginEnd="200dp"
+        app:layout_constraintBottom_toTopOf="@+id/textEmail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo" />
+
+    <EditText
+        android:id="@+id/textEmail"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:gravity="center"
+        android:hint="E-mail"
+        android:maxLines="1"
+        android:text=""
+        android:textColorHint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ImageLogo" />
+
+    <EditText
+        android:id="@+id/textPassword"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:gravity="center"
+        android:hint="Password"
+        android:maxLines="1"
+        android:text=""
+        android:textColorHint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/buttonExit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textEmail" />
+
+    <Button
+        android:id="@+id/buttonExit"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:text="Войти"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textPassword" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
