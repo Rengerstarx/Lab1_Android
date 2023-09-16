@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Lab_1_new</string>
+    <string name="app_name">Лабораторная работа</string>
+    <!-- Массив логинов -->
     <string-array name="Emails">
         <item>vip.bekezin@mail.ru</item>
         <item>Prokopovich@gmail.com</item>
@@ -7,6 +8,7 @@
         <item>AShelokova@sfedu.ru</item>
         <item>YouriySan@mail.ru</item>
     </string-array>
+    <!-- Массив паролей -->
     <string-array name="Passwords">
         <item>Rehert43343</item>
         <item>Cake45_9</item>
@@ -14,8 +16,32 @@
         <item>una.sogna668</item>
         <item>abobaKLKL</item>
     </string-array>
-    <string name="title_activity_bottom_nav">BottomNavActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <!-- Массив рецептов -->
+    <string-array name="Recipes_Name">
+        <item>Борщ</item>
+        <item>Пицца</item>
+        <item>Салат "Цезарь"</item>
+        <item>Суп "Харчо"</item>
+        <item>Омлет</item>
+        <item>Шоколадный торт</item>
+        <item>Суши</item>
+        <item>Греческий салат</item>
+        <item>Лазанья</item>
+        <item>Фруктовый салат</item>
+    </string-array>
+    <!-- Массив рецептов -->
+    <string-array name="Recipes_URL">
+        <item>https://mykaleidoscope.ru/x/uploads/posts/2022-09/1663686542_8-mykaleidoscope-ru-p-borshch-so-smetanoi-oboi-12.jpg</item>
+        <item>https://mykaleidoscope.ru/x/uploads/posts/2022-09/1663621618_63-mykaleidoscope-ru-p-pitstsa-pepperoni-yeda-vkontakte-67.jpg</item>
+        <item>https://karamellka.ru/wp-content/uploads/2017/10/cezar-salat-e1508495161510.jpg</item>
+        <item>https://sovet-ok.ru/wp-content/uploads/2017/10/111-51.jpg</item>
+        <item>https://proprikol.ru/wp-content/uploads/2020/10/kartinki-omlet-25.jpg</item>
+        <item>https://yandex-images.clstorage.net/5oW0N1H86/3baac5RyD/ZRy5oBNdA1en8VYuDI_RBdKTTsg8oa-Bi00ebL83hcNbcGAuZl7JAaK0lGKz62KM_WLMy6BmOqOkHbW7hKQlrjwh_fUiTB8K8oRCQ1yv3RHa5jvEeNDHkP8kFxyCI7SuI1R03oOfHMA6DRGKOha7qaQbuZ6lUz-qEPnQRnBoHQdxLHV0I81a_8d5h6ZsuyGZmrqyGIS4HxBjqde8krLAk3oliAYzzyDMyg2BRmraL-2kp8kCIHMjYujggLpwFPWPxQSJRIudVjunObseOO_JgUpashiUbD8Myw3PyDq-iD8eLZx645dEEAZt9abihusBCK_9DgwL01qIoNQCZJQ5K1WgAdy_nX7jL03bUmxPQbniZrZo-KBfYEdJz0QOysyDPnFgNm_LgCj-pRHGgoaLjRRHNargx-eujEwI9iBs8dsBzFnkw_GOB9tZ-3LYM0UhWr7iGJQ49_C7QUMMpkbA23aBgLrn13jULvFxHvJivxWYj61KYFNTJmCgdCL0HBnbrSQBxMMpWqOzUSO2CBdtDcL2QhDAzNN0a8mbuALKyJ9GhXw6S6NQWArp9fa-bo8lEHcZKsC_J8J8OLT-xLBFJ7H02RjXwQJ7N60nMvSj2aGKup64LODPGNNBEwQaBvSTsjEgHss71EwG6YHuxn6zmQgLMcrot7Nu0EzI3oiMrfc1XOG817Wav8_FU57QG_UFUtZyLBTUpwhP8QsIjkrQc3ox6P4bh3BEei0ZiuIav1XA7wkqiLszbqhs6HoUfAWrXSwR6E-xwn-HUZ8-TIM5CW7i5hj0sDOgszVX_B5ahD_CuXgCo_8gUOI1_T4Ket95mJ8JOoi747r8VPh6FAzB6830VeRzid7b-9EzIiQruaHmSn4YAKxHkDu975CGLuxPFgEwaqv_wJzyYbHKIvKj2TzjlSKAQ1M-_LzYWvDkgQNB2P3QLzlmdxshw8Jcu23R-lIqzAD8Rzw3XRcILvJg</item>
+        <item>https://kakogo-chisla.ru/wp-content/uploads/2022/06/Mezhdunarodnyj-den-sushi-18-iyunya.jpg</item>
+        <item>https://greekbook.ru/wp-content/uploads/2022/09/1627061096_30-p-neobichnaya-podacha-grecheskogo-salata-35.jpg</item>
+        <item>https://legkovmeste.ru/wp-content/uploads/2018/01/a-11.jpg</item>
+        <item>https://samisrykami.ru/wp-content/uploads/2021/06/banan-desert-ananas-apelsin-kivi-fruktovyi-salat-iabloko-1-2048x1365.jpg</item>
+    </string-array>
+    <!--  -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
