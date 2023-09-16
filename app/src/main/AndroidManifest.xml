@@ -7,8 +7,8 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/unnamed"
-        android:label="Лабораторная №1"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="Лабораторная работа"
+        android:roundIcon="@drawable/unnamed"
         android:supportsRtl="true"
         android:theme="@style/Theme.Lab_1_new"
         tools:targetApi="31">
