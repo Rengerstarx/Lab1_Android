@@ -18,7 +18,9 @@ class BottomNavActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_nav)
+        /**Подставляем начальный фрагмент*/
         replaceFragment(Recipe_list())
+        /**Инициализируем BubbleNavigation и объявляем переходы(https://github.com/akshay2211/BubbleTabBar)*/
         bubble = findViewById(R.id.bubbleTabBar)
         bubble.addBubbleListener(object : OnBubbleClickListener{
             override fun onBubbleClick(id: Int) {
@@ -36,7 +38,7 @@ class BottomNavActivity : AppCompatActivity() {
             }
         })
     }
-
+    /**Подстановка фрагмента*/
     fun replaceFragment(fragment: Fragment){
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lab_1_new.R
 import com.example.lab_1_new.databinding.RecipeBinding
+import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import java.util.jar.Attributes.Name
 
@@ -17,7 +18,13 @@ class Recipe_Adapter(val listener: Listener): RecyclerView.Adapter<Recipe_Adapte
         val binding = RecipeBinding.bind(item)
         fun bind(recipe: Recipe, listener: Listener) = with(binding){
             NameRecipe.text=recipe.Description
-            Picasso.get().load(recipe.Image).into(imageRecipe)
+            val storage = FirebaseStorage.getInstance()
+            /**Подгрузка с БД*/
+            storage.reference.child("Lab3/${recipe.Image}").downloadUrl.addOnSuccessListener { uri ->
+                val imageUrl = uri.toString()
+                /**Суем в пикасо и отрисовываем*/
+                Picasso.get().load(imageUrl).into(imageRecipe)
+            }
             carder.setOnClickListener{
                 listener.onClick(recipe)
             }
