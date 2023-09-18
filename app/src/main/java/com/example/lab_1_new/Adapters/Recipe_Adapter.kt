@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.lab_1_new.Data_Classes.Recipe
 import com.example.lab_1_new.R
 import com.example.lab_1_new.databinding.RecipeBinding
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-import java.util.jar.Attributes.Name
 
 class Recipe_Adapter(val listener: Listener): RecyclerView.Adapter<Recipe_Adapter.BlockHolder>() {
 
