@@ -3,7 +3,12 @@ package com.example.lab_1_new
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
+import com.example.lab_1_new.Data_Classes.Recipe_pars
+import com.example.lab_1_new.Data_Classes.Recipes
 import com.example.lab_1_new.Fragment.Recipe_favorite
 import com.example.lab_1_new.Fragment.Recipe_list
 import com.example.lab_1_new.Fragment.Recipe_now
@@ -14,6 +19,7 @@ import io.ak1.OnBubbleClickListener
 class BottomNavActivity : AppCompatActivity() {
 
     lateinit var bubble: BubbleTabBar
+    private val dataModel: Recipes by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

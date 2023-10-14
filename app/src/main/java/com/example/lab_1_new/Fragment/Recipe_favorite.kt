@@ -1,13 +1,13 @@
 package com.example.lab_1_new.Fragment
 
+import android.app.Fragment
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.lab_1_new.R
 
-class Recipe_favorite : Fragment()  {
+class Recipe_favorite : androidx.fragment.app.Fragment()  {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
