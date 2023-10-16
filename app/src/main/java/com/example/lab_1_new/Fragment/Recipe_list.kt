@@ -7,13 +7,14 @@ package com.example.lab_1_new.Fragment
  import android.view.ViewGroup
  import androidx.fragment.app.activityViewModels
  import androidx.recyclerview.widget.RecyclerView
+ import androidx.room.Database
  import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
  import com.beust.klaxon.JsonObject
  import com.beust.klaxon.Klaxon
  import com.example.lab_1_new.Adapters.Recipe_Adapter
  import com.example.lab_1_new.Data_Classes.Recipe_pars
- import com.example.lab_1_new.Data_Classes.Recipes
  import com.example.lab_1_new.R
+ import com.example.lab_1_new.RecipeDatabase
  import java.io.BufferedReader
  import java.io.InputStreamReader
  import java.net.HttpURLConnection
@@ -24,27 +25,22 @@ class Recipe_list : androidx.fragment.app.Fragment(), Recipe_Adapter.Listener {
 
     private lateinit var viewManager: RecyclerView.LayoutManager
     lateinit var apiJson: URL
-    var Recipe_pars_list: MutableList<Recipe_pars> = mutableListOf()
+    var Recipe_pars_list: List<Recipe_pars> = listOf()
     val adapter=Recipe_Adapter(this) //Адаптер для списка
-    private val dataModel: Recipes by activityViewModels()
+    lateinit var db: RecipeDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_recipe_list, container, false)
+        db = RecipeDatabase.getDatabase(requireContext())
         thread {
             apiJson = URL("https://raw.githubusercontent.com/Lpirskaya/JsonLab/master/recipes2022.json")
-            if(dataModel.recipes.value?.isNotEmpty() == true){
-                requireActivity().runOnUiThread {
-                    Recipe_pars_list= dataModel.recipes.value!!
-                }
-            }else{
+            if(db.getDao().getCountRecipes()==0){
                 ParsJson(apiJson)
-                requireActivity().runOnUiThread {
-                    dataModel.recipes.value=Recipe_pars_list
-                }
             }
+            Recipe_pars_list=db.getDao().getAllRecipes()
             requireActivity().runOnUiThread {
                 /**Цикличный слой для бесконечной крутилки(https://github.com/BeksOmega/looping-layout)*/
                 viewManager = LoopingLayoutManager(
@@ -56,8 +52,8 @@ class Recipe_list : androidx.fragment.app.Fragment(), Recipe_Adapter.Listener {
                 view.findViewById<RecyclerView>(R.id.RecyclerView).layoutManager= viewManager
                 view.findViewById<RecyclerView>(R.id.RecyclerView).adapter=adapter
                 /**Заполнения списка*/
-                dataModel.recipes.value?.forEach{
-                    adapter.RecipeCreate(Recipe_pars(it.id,it.Calorie, it.Time, it.Name, it.Ingredients, it.Difficulty))
+                Recipe_pars_list.forEach{
+                    adapter.RecipeCreate(it)
                 }
             }
         }
@@ -68,9 +64,9 @@ class Recipe_list : androidx.fragment.app.Fragment(), Recipe_Adapter.Listener {
     override fun onClick(recipe: Recipe_pars) {
         val fragment = Recipe_now()
         val bundle = Bundle()
-        bundle.putInt("id", recipe.id)
+        bundle.putInt("id", recipe.id!!)
+        println(recipe.id)
         fragment.arguments = bundle
-
         val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.BAZA, fragment)
@@ -99,16 +95,15 @@ class Recipe_list : androidx.fragment.app.Fragment(), Recipe_Adapter.Listener {
             JSONArray.forEach {
                 val JSONobject = it as JsonObject
                 val field = JSONobject.values.toTypedArray()
-                Recipe_pars_list.add(
-                    Recipe_pars(
-                        Recipe_pars_list.size,
-                        field[0].toString(),
-                        field[1] as Int,
-                        field[2].toString(),
-                        field[3].toString(),
-                        field[4] as Int
-                    )
+                val recipe = Recipe_pars(
+                    null,
+                    field[0].toString(),
+                    field[1] as Int,
+                    field[2].toString(),
+                    field[3].toString(),
+                    field[4] as Int
                 )
+                db.getDao().insertItem(recipe)
             }
         }
     }

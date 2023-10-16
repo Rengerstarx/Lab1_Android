@@ -7,9 +7,18 @@ import android.content.Intent
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.cardview.widget.CardView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
+import com.example.lab_1_new.Data_Classes.Users
+import java.security.MessageDigest
+import java.util.*
+import kotlin.concurrent.thread
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,12 +38,14 @@ class MainActivity : AppCompatActivity() {
     lateinit var txtPs: EditText
     lateinit var bntEx: Button
 
-    /**Контейнер для работы с паролями и логинами*/
-    var EmailAndPassword: MutableMap<String, String> = mutableMapOf<String,String>()
+    /**Переменная для работы с БД*/
+    lateinit var database: UsersDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        database = UsersDatabase.getDatabase(this)
 
         /**Присвоение переменным объектов из разметки*/
         txtEm = findViewById(R.id.textEmail)
@@ -43,21 +54,29 @@ class MainActivity : AppCompatActivity() {
         val card_front=findViewById<CardView>(R.id.Card)
         val card_back=findViewById<CardView>(R.id.CardBack)
 
-        /**Заполнение контейнера*/
-        val array1 = applicationContext.resources.getStringArray(R.array.Emails)
-        val array2 = applicationContext.resources.getStringArray(R.array.Passwords)
-        for (i in array1.indices){
-            EmailAndPassword[array1[i]] = array2 [i]
+        findViewById<Button>(R.id.buttonReg).setOnClickListener {
+            Reg1()
         }
+
         /**Слушатель для обработкии ввода*/
         bntEx.setOnClickListener {
-            if(EmailAndPassword.containsKey(txtEm.text.toString()) && EmailAndPassword[txtEm.text.toString()] == txtPs.text.toString()){
-                val intent = Intent(this, BottomNavActivity::class.java)
-                startActivity(intent)
-            }else{
-                playSound() //Воспроизведение сирены
-                txtPs.setTextColor(applicationContext.resources.getColor(R.color.red))
-                txtEm.setTextColor(applicationContext.resources.getColor(R.color.red))
+            val textLogin = txtEm.text.toString()
+            val textPassword = txtPs.text.toString()
+            thread {
+                if (database.getDaoUsers().checkUserExists(textLogin) != 0) {
+                    if (database.getDaoUsers().getUserByLogin(textLogin).Password == textPassword) {
+                        runOnUiThread {
+                            val intent = Intent(this, BottomNavActivity::class.java)
+                            startActivity(intent)
+                        }
+                    } else {
+                        runOnUiThread {
+                            playSound() //Воспроизведение сирены
+                            txtPs.setTextColor(applicationContext.resources.getColor(R.color.red))
+                            txtEm.setTextColor(applicationContext.resources.getColor(R.color.red))
+                        }
+                    }
+                }
             }
         }
         /**Возвращение нормального цвета при нажатии*/
@@ -146,5 +165,97 @@ class MainActivity : AppCompatActivity() {
             mMediaPlayer!!.isLooping = true
             mMediaPlayer!!.start()
         } else mMediaPlayer!!.start()
+    }
+
+    fun generateRandomHash(): String {
+        val random = Random(System.currentTimeMillis())
+        val byteArray = ByteArray(16)
+        random.nextBytes(byteArray)
+        val md5Digest = MessageDigest.getInstance("MD5")
+        val md5Hash = md5Digest.digest(byteArray)
+        val hexString = StringBuilder()
+        for (byte in md5Hash) {
+            val hex = String.format("%02x", byte.toInt() and 0xFF)
+            hexString.append(hex)
+        }
+        return hexString.toString()
+    }
+
+    fun EmptyField(){
+        Toast.makeText(this, "Поле не может быть пустыми", Toast.LENGTH_LONG).show()
+    }
+
+    fun Reg1(){
+        var username = ""
+        val dialog = MaterialDialog(this)
+            .title(text = "Регистрация")
+            .message(text = "Введите ваше имя")
+            .input(hint = "Имя пользователя") { dialog, text ->
+                username = text.toString()
+            }.positiveButton(text = "Далее") { dialog ->
+                if(username.isNotEmpty()){
+                    Reg2(username)
+                }else
+                    EmptyField()
+            }.negativeButton(text = "Отмена") { dialog ->
+                // Обработка нажатия кнопки "Отмена"
+                dialog.dismiss()
+            }
+        dialog.show()
+    }
+
+    fun Reg2(username: String){
+        var login = ""
+        val dialog = MaterialDialog(this)
+            .title(text = "Регистрация")
+            .message(text = "Введите ваш логин")
+            .input(hint = "Логин") { dialog, text ->
+                login = text.toString()
+            }.positiveButton(text = "Далее") { dialog ->
+                if(login.isNotEmpty()){
+                    thread {
+                        if (database.getDaoUsers().checkUserExists(login) == 0) {
+                            Reg3(username,login)
+                        } else {
+                            runOnUiThread {
+                                Toast.makeText(this, "Пользователь с таким логином уже есть", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }else
+                    EmptyField()
+            }.negativeButton(text = "Отмена") { dialog ->
+                // Обработка нажатия кнопки "Отмена"
+                dialog.dismiss()
+            }
+        dialog.show()
+    }
+
+    fun Reg3(username: String, login:String){
+        var password = ""
+        runOnUiThread {
+            val dialog = MaterialDialog(this)
+                .title(text = "Регистрация")
+                .message(text = "Введите ваш пароль")
+                .input(hint = "Пароль", InputType.TYPE_TEXT_VARIATION_PASSWORD) { dialog, text ->
+                    password = text.toString()
+                }.positiveButton(text = "Зарегистрироваться") { dialog ->
+                    if (password.isNotEmpty()) {
+                        thread {
+                            database.getDaoUsers()
+                                .insertItem(Users(generateRandomHash(), username, login, password))
+                            runOnUiThread {
+                                val intent = Intent(this, BottomNavActivity::class.java)
+                                startActivity(intent)
+                            }
+                        }
+                    } else
+                        EmptyField()
+                }.negativeButton(text = "Отмена") { dialog ->
+                    // Обработка нажатия кнопки "Отмена"
+                    dialog.dismiss()
+                }
+            dialog.show()
+        }
     }
 }
