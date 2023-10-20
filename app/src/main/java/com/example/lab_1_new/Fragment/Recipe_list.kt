@@ -1,20 +1,22 @@
 package com.example.lab_1_new.Fragment
 
- import android.app.Fragment
+ import android.content.Context
+ import android.content.SharedPreferences
  import android.os.Bundle
  import android.view.LayoutInflater
  import android.view.View
  import android.view.ViewGroup
- import androidx.fragment.app.activityViewModels
  import androidx.recyclerview.widget.RecyclerView
- import androidx.room.Database
+ import com.afollestad.materialdialogs.MaterialDialog
  import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
  import com.beust.klaxon.JsonObject
  import com.beust.klaxon.Klaxon
  import com.example.lab_1_new.Adapters.Recipe_Adapter
  import com.example.lab_1_new.Data_Classes.Recipe_pars
  import com.example.lab_1_new.R
- import com.example.lab_1_new.RecipeDatabase
+ import com.example.lab_1_new.Databases.RecipeDatabase
+ import com.example.lab_1_new.Databases.UsersDatabase
+ import kotlinx.coroutines.runBlocking
  import java.io.BufferedReader
  import java.io.InputStreamReader
  import java.net.HttpURLConnection
@@ -28,13 +30,20 @@ class Recipe_list : androidx.fragment.app.Fragment(), Recipe_Adapter.Listener {
     var Recipe_pars_list: List<Recipe_pars> = listOf()
     val adapter=Recipe_Adapter(this) //Адаптер для списка
     lateinit var db: RecipeDatabase
+    lateinit var dbU: UsersDatabase
+    var login = ""
+    lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_recipe_list, container, false)
+        sharedPreferences = requireContext().getSharedPreferences("Login", Context.MODE_PRIVATE)
+        login = sharedPreferences.getString("Login","").toString()
+        println(login)
         db = RecipeDatabase.getDatabase(requireContext())
+        dbU = UsersDatabase.getDatabase(requireContext())
         thread {
             apiJson = URL("https://raw.githubusercontent.com/Lpirskaya/JsonLab/master/recipes2022.json")
             if(db.getDao().getCountRecipes()==0){
@@ -65,12 +74,57 @@ class Recipe_list : androidx.fragment.app.Fragment(), Recipe_Adapter.Listener {
         val fragment = Recipe_now()
         val bundle = Bundle()
         bundle.putInt("id", recipe.id!!)
-        println(recipe.id)
+        print(recipe.id)
         fragment.arguments = bundle
         val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.BAZA, fragment)
         fragmentTransaction.commit()
+    }
+
+    override fun onLongclick(recipe: Recipe_pars) {
+        thread {
+            val User = dbU.getDaoUsers().getUserByLogin(login)
+            if(User.FavoriteRecipes.contains(recipe)){
+                requireActivity().runOnUiThread {
+                    MaterialDialog(requireContext()).show {
+                        title(text = "Избранное")
+                        message (text = "Удалить из избранного выбранный рецепт?")
+                        positiveButton(text = "Удалить") { dialog ->
+                            runBlocking {
+                                dbU.getDaoUsers().deleteObject(User)
+                            }
+                            thread {
+                                User.FavoriteRecipes.remove(recipe)
+                                dbU.getDaoUsers().insertItem(User)
+                            }
+                        }
+                        negativeButton(text = "Отмена") { dialog ->
+
+                        }
+                    }
+                }
+            }else{
+                requireActivity().runOnUiThread {
+                    MaterialDialog(requireContext()).show {
+                        title(text = "Избранное")
+                        message(text = "Добавить в избранное выбранный рецепт?")
+                        positiveButton(text = "Добавить") { dialog ->
+                            runBlocking {
+                                dbU.getDaoUsers().deleteObject(User)
+                            }
+                            thread {
+                                User.FavoriteRecipes.add(recipe)
+                                dbU.getDaoUsers().insertItem(User)
+                            }
+                        }
+                        negativeButton(text = "Отмена") { dialog ->
+
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**Функция получения JSON файла по ссылке используя HttpURLConnection и парсинга спомощью библиотеки Klaxon*/

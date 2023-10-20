@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import com.example.lab_1_new.Data_Classes.Recipe_pars
 import com.example.lab_1_new.R
-import com.example.lab_1_new.RecipeDatabase
+import com.example.lab_1_new.Databases.RecipeDatabase
 import kotlin.concurrent.thread
 
 
@@ -27,11 +26,8 @@ class Recipe_now : Fragment(){
         val view = inflater.inflate(R.layout.fragment_recipe_now, container, false)
         db = RecipeDatabase.getDatabase(requireContext())
         val bundle = this.arguments
-        if (bundle != null) {
-            idd = bundle.getInt("id", defaultValue)
-            println(idd)
-        }
-        thread{
+        thread {
+            idd = bundle?.getInt("id", defaultValue) ?: db.getDao().getAllRecipes().first().id!!
             NowRecipe = db.getDao().getRecipeById(idd)
             requireActivity().runOnUiThread {
                 view.findViewById<TextView>(R.id.Name).text = NowRecipe.Name

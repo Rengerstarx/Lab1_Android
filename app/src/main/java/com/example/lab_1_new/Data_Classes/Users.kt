@@ -10,4 +10,5 @@ data class Users(
     @PrimaryKey(autoGenerate = false) val HashId: String,
     @ColumnInfo(name = "Name") val Name: String,
     @ColumnInfo(name = "Login") val Login: String,
-    @ColumnInfo(name = "Password") val Password: String)
+    @ColumnInfo(name = "Password") val Password: String,
+    @ColumnInfo(name = "FavoriteRecipes") val FavoriteRecipes: MutableList<Recipe_pars>)

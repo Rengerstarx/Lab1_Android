@@ -3,7 +3,10 @@ package com.example.lab_1_new
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,10 +18,10 @@ import androidx.cardview.widget.CardView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.example.lab_1_new.Data_Classes.Users
+import com.example.lab_1_new.Databases.UsersDatabase
 import java.security.MessageDigest
 import java.util.*
 import kotlin.concurrent.thread
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,6 +36,9 @@ class MainActivity : AppCompatActivity() {
     var isFront1 = true
     var isAnimating = false
 
+    lateinit var sharedPreferences: SharedPreferences
+    lateinit var editor: Editor
+
     /**Переменные для работы с разметкой*/
     lateinit var txtEm: EditText
     lateinit var txtPs: EditText
@@ -45,6 +51,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        sharedPreferences = this.getSharedPreferences("Login", Context.MODE_PRIVATE)
+        editor = sharedPreferences.edit()
         database = UsersDatabase.getDatabase(this)
 
         /**Присвоение переменным объектов из разметки*/
@@ -65,6 +73,8 @@ class MainActivity : AppCompatActivity() {
             thread {
                 if (database.getDaoUsers().checkUserExists(textLogin) != 0) {
                     if (database.getDaoUsers().getUserByLogin(textLogin).Password == textPassword) {
+                        editor.putString("Login", database.getDaoUsers().getUserByLogin(textLogin).Login)
+                        editor.apply()
                         runOnUiThread {
                             val intent = Intent(this, BottomNavActivity::class.java)
                             startActivity(intent)
@@ -242,9 +252,11 @@ class MainActivity : AppCompatActivity() {
                 }.positiveButton(text = "Зарегистрироваться") { dialog ->
                     if (password.isNotEmpty()) {
                         thread {
-                            database.getDaoUsers()
-                                .insertItem(Users(generateRandomHash(), username, login, password))
+                            val hash = generateRandomHash()
+                            database.getDaoUsers().insertItem(Users(hash, username, login, password, mutableListOf()))
                             runOnUiThread {
+                                editor.putString("Login", login)
+                                editor.apply()
                                 val intent = Intent(this, BottomNavActivity::class.java)
                                 startActivity(intent)
                             }

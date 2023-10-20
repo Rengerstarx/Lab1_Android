@@ -30,7 +30,12 @@ class Recipe_Adapter(val listener: Listener): RecyclerView.Adapter<Recipe_Adapte
             carder.setOnClickListener{
                 listener.onClick(recipe)
             }
-
+            carder.setOnLongClickListener(object : View.OnLongClickListener {
+                override fun onLongClick(v: View): Boolean {
+                    listener.onLongclick(recipe)
+                    return true
+                }
+            })
         }
     }
 
@@ -64,5 +69,6 @@ class Recipe_Adapter(val listener: Listener): RecyclerView.Adapter<Recipe_Adapte
 
     interface Listener{
         fun onClick(recipe: Recipe_pars)
+        fun onLongclick(recipe: Recipe_pars)
     }
 }
